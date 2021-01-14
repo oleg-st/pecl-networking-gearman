@@ -45,7 +45,7 @@ gearman_return_t _php_task_cb_fn(gearman_task_obj *task, gearman_client_obj *cli
                 param_count = 2; 
         }    
 
-        if (call_user_function_ex(EG(function_table), NULL, &zcall, &retval, param_count, argv, 0, NULL) != SUCCESS) {
+        if (call_user_function(EG(function_table), NULL, &zcall, &retval, param_count, argv) != SUCCESS) {
                 php_error_docref(NULL,
                                 E_WARNING,
                                 "Could not call the function %s",

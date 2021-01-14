@@ -54,20 +54,11 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_INFO_EX(arginfo_oo_gearman_task_construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_oo_gearman_task_destruct, 0, 0, 0)
-ZEND_END_ARG_INFO()
-
 ZEND_BEGIN_ARG_INFO_EX(arginfo_gearman_task_return_code, 0, 0, 1)
 	ZEND_ARG_INFO(0, task_object)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_oo_gearman_task_return_code, 0, 0, 0)
-ZEND_END_ARG_INFO()
-
-/* TODO: so looks like I may have implemented this incorrectly for
- * now no oo interface exist. I will need to come back to this later */
-ZEND_BEGIN_ARG_INFO_EX(arginfo_gearman_task_context, 0, 0, 1)
-	ZEND_ARG_INFO(0, task_object)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_gearman_task_function_name, 0, 0, 1)
@@ -155,9 +146,6 @@ ZEND_END_ARG_INFO()
 /*
  * Gearman Job Functions
  */
-ZEND_BEGIN_ARG_INFO_EX(arginfo_oo_gearman_job_destruct, 0, 0, 0)
-ZEND_END_ARG_INFO()
-
 ZEND_BEGIN_ARG_INFO_EX(arginfo_gearman_job_return_code, 0, 0, 1)
 	ZEND_ARG_INFO(0, job_object)
 ZEND_END_ARG_INFO()
@@ -273,9 +261,6 @@ ZEND_END_ARG_INFO()
 
 // Objected Oriented method for creating a GearmanClient object
 ZEND_BEGIN_ARG_INFO_EX(arginfo_gearman_client_construct, 0, 0, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(arginfo_oo_gearman_client_destruct, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_gearman_client_return_code, 0, 0, 1)
@@ -695,9 +680,6 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_oo_gearman_client_set_context, 0, 0, 1)
 	ZEND_ARG_INFO(0, context)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_gearman_client_enable_exception_handler, 0, 0, 0)
-ZEND_END_ARG_INFO()
-
 ZEND_BEGIN_ARG_INFO_EX(arginfo_oo_gearman_client_enable_exception_handler, 0, 0,0)
 ZEND_END_ARG_INFO()
 
@@ -723,9 +705,6 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_gearman_worker_create, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_oo_gearman_worker_construct, 0, 0, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(arginfo_oo_gearman_worker_destruct, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_gearman_worker_error, 0, 0, 1)
@@ -1173,39 +1152,39 @@ zend_function_entry gearman_exception_methods[] = {
 };
 
 PHP_MINIT_FUNCTION(gearman) {
-	zend_class_entry ce;
+	zend_class_entry ce_client, ce_task, ce_worker, ce_job, ce_exception;
 
-	INIT_CLASS_ENTRY(ce, "GearmanClient", gearman_client_methods);
-	gearman_client_ce = zend_register_internal_class(&ce);
+	INIT_CLASS_ENTRY(ce_client, "GearmanClient", gearman_client_methods);
+	gearman_client_ce = zend_register_internal_class(&ce_client);
 	gearman_client_ce->create_object = gearman_client_obj_new;
 	memcpy(&gearman_client_obj_handlers, zend_get_std_object_handlers(), sizeof(gearman_client_obj_handlers));
 	gearman_client_obj_handlers.offset = XtOffsetOf(gearman_client_obj, std);
 	gearman_client_obj_handlers.free_obj = gearman_client_free_obj;
 
-	INIT_CLASS_ENTRY(ce, "GearmanTask", gearman_task_methods);
-	gearman_task_ce = zend_register_internal_class(&ce);
+	INIT_CLASS_ENTRY(ce_task, "GearmanTask", gearman_task_methods);
+    gearman_task_ce = zend_register_internal_class(&ce_task);
 	gearman_task_ce->create_object = gearman_task_obj_new;
 	memcpy(&gearman_task_obj_handlers, zend_get_std_object_handlers(), sizeof(gearman_task_obj_handlers));
 	gearman_task_obj_handlers.offset = XtOffsetOf(gearman_task_obj, std);
 	gearman_task_obj_handlers.free_obj = gearman_task_free_obj;
 
-	INIT_CLASS_ENTRY(ce, "GearmanWorker", gearman_worker_methods);
-	gearman_worker_ce = zend_register_internal_class(&ce);
+	INIT_CLASS_ENTRY(ce_worker, "GearmanWorker", gearman_worker_methods);
+	gearman_worker_ce = zend_register_internal_class(&ce_worker);
 	gearman_worker_ce->create_object = gearman_worker_obj_new;
-	memcpy(&gearman_worker_obj_handlers, zend_get_std_object_handlers(), sizeof(gearman_worker_obj_handlers));
+	memcpy(&gearman_worker_obj_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
 	gearman_worker_obj_handlers.offset = XtOffsetOf(gearman_worker_obj, std);
 	gearman_worker_obj_handlers.free_obj = gearman_worker_free_obj;
 
-	INIT_CLASS_ENTRY(ce, "GearmanJob", gearman_job_methods);
-	gearman_job_ce = zend_register_internal_class(&ce);
+	INIT_CLASS_ENTRY(ce_job, "GearmanJob", gearman_job_methods);
+	gearman_job_ce = zend_register_internal_class(&ce_job);
 	gearman_job_ce->create_object = gearman_job_obj_new;
 	memcpy(&gearman_job_obj_handlers, zend_get_std_object_handlers(), sizeof(gearman_job_obj_handlers));
 	gearman_job_obj_handlers.offset = XtOffsetOf(gearman_job_obj, std);
 	gearman_job_obj_handlers.free_obj = gearman_job_free_obj;
 
 	/* XXX exception class */
-	INIT_CLASS_ENTRY(ce, "GearmanException", gearman_exception_methods)
-	gearman_exception_ce = zend_register_internal_class_ex(&ce, zend_exception_get_default());
+	INIT_CLASS_ENTRY(ce_exception, "GearmanException", gearman_exception_methods)
+	gearman_exception_ce = zend_register_internal_class_ex(&ce_exception, zend_exception_get_default());
 	gearman_exception_ce->ce_flags |= ZEND_ACC_FINAL;
 	zend_declare_property_long(gearman_exception_ce, "code", sizeof("code")-1, 0, ZEND_ACC_PUBLIC);
 

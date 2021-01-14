@@ -46,6 +46,7 @@ PHP_FUNCTION(gearman_client_create) {
 
         gearman_client_ctor(INTERNAL_FUNCTION_PARAM_PASSTHRU);
 }
+/* }}} */
 
 inline zend_object *gearman_client_obj_new(zend_class_entry *ce) {
 	gearman_client_obj *intern = ecalloc(1,
@@ -99,6 +100,7 @@ void gearman_client_free_obj(zend_object *object) {
 
         zend_object_std_dtor(&intern->std);
 }
+/* }}} */
 
 /* {{{ proto int gearman_client_return_code()
    get last gearman_return_t */
@@ -130,7 +132,7 @@ PHP_FUNCTION(gearman_client_error) {
 
         error = (char *)gearman_client_error(&(obj->client));
         if (error) {
-                RETURN_STRING(error)
+                RETURN_STRING(error);
         }    
         RETURN_FALSE;
 }
@@ -147,7 +149,7 @@ PHP_FUNCTION(gearman_client_get_errno) {
         }    
         obj = Z_GEARMAN_CLIENT_P(zobj);
 
-        RETURN_LONG(gearman_client_errno(&(obj->client)))
+        RETURN_LONG(gearman_client_errno(&(obj->client)));
 }
 /* }}} */
 
@@ -162,7 +164,7 @@ PHP_FUNCTION(gearman_client_options) {
         }    
         obj = Z_GEARMAN_CLIENT_P(zobj);
 
-        RETURN_LONG(gearman_client_options(&(obj->client)))
+        RETURN_LONG(gearman_client_options(&(obj->client)));
 }
 /* }}} */
 
@@ -230,7 +232,7 @@ PHP_FUNCTION(gearman_client_timeout) {
         }    
         obj = Z_GEARMAN_CLIENT_P(zobj);
 
-        RETURN_LONG(gearman_client_timeout(&(obj->client)))
+        RETURN_LONG(gearman_client_timeout(&(obj->client)));
 }
 /* }}} */
 
@@ -519,7 +521,7 @@ PHP_FUNCTION(gearman_client_do_job_handle) {
         obj = Z_GEARMAN_CLIENT_P(zobj);
 
 
-        RETURN_STRING((char *)gearman_client_do_job_handle(&(obj->client)))
+        RETURN_STRING((char *)gearman_client_do_job_handle(&(obj->client)));
 }
 /* }}} */
 
@@ -1177,13 +1179,21 @@ PHP_FUNCTION(gearman_client_clear_callbacks) {
         gearman_client_clear_fn(&obj->client);
 
         zval_dtor(&obj->zworkload_fn);
+        ZVAL_UNDEF(&obj->zworkload_fn);
         zval_dtor(&obj->zcreated_fn);
+        ZVAL_UNDEF(&obj->zcreated_fn);
         zval_dtor(&obj->zdata_fn);
+        ZVAL_UNDEF(&obj->zdata_fn);
         zval_dtor(&obj->zwarning_fn);
+        ZVAL_UNDEF(&obj->zwarning_fn);
         zval_dtor(&obj->zstatus_fn);
+        ZVAL_UNDEF(&obj->zstatus_fn);
         zval_dtor(&obj->zcomplete_fn);
+        ZVAL_UNDEF(&obj->zcomplete_fn);
         zval_dtor(&obj->zexception_fn);
+        ZVAL_UNDEF(&obj->zexception_fn);
         zval_dtor(&obj->zfail_fn);
+        ZVAL_UNDEF(&obj->zfail_fn);
 
         RETURN_TRUE;
 }

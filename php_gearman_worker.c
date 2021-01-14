@@ -142,7 +142,7 @@ PHP_FUNCTION(gearman_worker_errno) {
         }    
         obj = Z_GEARMAN_WORKER_P(zobj);
 
-        RETURN_LONG(gearman_worker_errno(&(obj->worker)))
+        RETURN_LONG(gearman_worker_errno(&(obj->worker)));
 }
 /* }}} */
 
@@ -157,7 +157,7 @@ PHP_FUNCTION(gearman_worker_options) {
         }    
         obj = Z_GEARMAN_WORKER_P(zobj);
 
-        RETURN_LONG(gearman_worker_options(&(obj->worker)))
+        RETURN_LONG(gearman_worker_options(&(obj->worker)));
 }
 /* }}} */
 
@@ -223,7 +223,7 @@ PHP_FUNCTION(gearman_worker_timeout) {
         }    
         obj = Z_GEARMAN_WORKER_P(zobj);
 
-        RETURN_LONG(gearman_worker_timeout(&(obj->worker)))
+        RETURN_LONG(gearman_worker_timeout(&(obj->worker)));
 }
 /* }}} */
 
@@ -495,7 +495,7 @@ static void *_php_worker_function_callback(gearman_job_st *job,
 
         jobj->ret = GEARMAN_SUCCESS;
 
-        if (call_user_function_ex(EG(function_table), NULL, &worker_cb->zcall, &retval, param_count, argv, 0, NULL) != SUCCESS) {
+        if (call_user_function(EG(function_table), NULL, &worker_cb->zcall, &retval, param_count, argv) != SUCCESS) {
                 php_error_docref(NULL,
                                 E_WARNING,
                                 "Could not call the function %s",

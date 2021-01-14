@@ -256,7 +256,7 @@ PHP_FUNCTION(gearman_job_handle) {
 		RETURN_FALSE;
 	}
 
-	RETURN_STRING((char *)gearman_job_handle(obj->job))
+	RETURN_STRING((char *)gearman_job_handle(obj->job));
 }
 /* }}} */
 
@@ -276,7 +276,7 @@ PHP_FUNCTION(gearman_job_function_name) {
 		RETURN_FALSE;
 	}
 
-	RETURN_STRING((char *)gearman_job_function_name(obj->job))
+	RETURN_STRING((char *)gearman_job_function_name(obj->job));
 }
 /* }}} */
 
@@ -296,7 +296,7 @@ PHP_FUNCTION(gearman_job_unique) {
 		RETURN_FALSE;
 	}
 
-	RETURN_STRING((char *)gearman_job_unique(obj->job))
+	RETURN_STRING((char *)gearman_job_unique(obj->job));
 }
 /* }}} */
 
