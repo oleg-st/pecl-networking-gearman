@@ -146,6 +146,9 @@ ZEND_END_ARG_INFO()
 /*
  * Gearman Job Functions
  */
+ZEND_BEGIN_ARG_INFO_EX(arginfo_oo_gearman_job_destruct, 0, 0, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(arginfo_gearman_job_return_code, 0, 0, 1)
 	ZEND_ARG_INFO(0, job_object)
 ZEND_END_ARG_INFO()
@@ -261,6 +264,9 @@ ZEND_END_ARG_INFO()
 
 // Objected Oriented method for creating a GearmanClient object
 ZEND_BEGIN_ARG_INFO_EX(arginfo_gearman_client_construct, 0, 0, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_oo_gearman_client_destruct, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_gearman_client_return_code, 0, 0, 1)
@@ -707,6 +713,9 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_INFO_EX(arginfo_oo_gearman_worker_construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_oo_gearman_worker_destruct, 0, 0, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(arginfo_gearman_worker_error, 0, 0, 1)
 	ZEND_ARG_INFO(0, worker_object)
 ZEND_END_ARG_INFO()
@@ -1039,6 +1048,7 @@ zend_function_entry gearman_methods[]= {
 
 static zend_function_entry gearman_client_methods[]= {
 	PHP_ME(GearmanClient, __construct, arginfo_gearman_client_construct, ZEND_ACC_CTOR | ZEND_ACC_PUBLIC)
+	PHP_ME(GearmanClient, __destruct, arginfo_oo_gearman_client_destruct, ZEND_ACC_PUBLIC)
 	PHP_ME_MAPPING(returnCode, gearman_client_return_code, arginfo_oo_gearman_client_return_code, ZEND_ACC_PUBLIC)
 	PHP_ME_MAPPING(error, gearman_client_error, arginfo_oo_gearman_client_error, ZEND_ACC_PUBLIC)
 	PHP_ME_MAPPING(getErrno, gearman_client_get_errno, arginfo_oo_gearman_client_get_errno, ZEND_ACC_PUBLIC)
@@ -1107,6 +1117,7 @@ zend_function_entry gearman_task_methods[]= {
 
 zend_function_entry gearman_worker_methods[]= {
 	PHP_ME(GearmanWorker, __construct, arginfo_oo_gearman_worker_construct, ZEND_ACC_CTOR | ZEND_ACC_PUBLIC)
+	PHP_ME(GearmanWorker, __destruct, arginfo_oo_gearman_worker_destruct, ZEND_ACC_PUBLIC)
 	PHP_ME_MAPPING(returnCode, gearman_worker_return_code, arginfo_oo_gearman_worker_return_code, ZEND_ACC_PUBLIC)
 	PHP_ME_MAPPING(error, gearman_worker_error, arginfo_oo_gearman_worker_error, ZEND_ACC_PUBLIC)
 	PHP_ME_MAPPING(getErrno, gearman_worker_errno, arginfo_oo_gearman_worker_errno, ZEND_ACC_PUBLIC)
@@ -1131,6 +1142,7 @@ zend_function_entry gearman_worker_methods[]= {
 };
 
 zend_function_entry gearman_job_methods[]= {
+    PHP_ME(GearmanJob, __destruct, arginfo_oo_gearman_job_destruct, ZEND_ACC_PUBLIC)
 	PHP_ME_MAPPING(returnCode, gearman_job_return_code, arginfo_oo_gearman_job_return_code, ZEND_ACC_PUBLIC)
 	PHP_ME_MAPPING(setReturn, gearman_job_set_return, arginfo_oo_gearman_job_set_return, ZEND_ACC_PUBLIC)
 	PHP_ME_MAPPING(sendData, gearman_job_send_data, arginfo_oo_gearman_job_send_data, ZEND_ACC_PUBLIC)
@@ -1162,7 +1174,7 @@ PHP_MINIT_FUNCTION(gearman) {
 	gearman_client_obj_handlers.free_obj = gearman_client_free_obj;
 
 	INIT_CLASS_ENTRY(ce_task, "GearmanTask", gearman_task_methods);
-    gearman_task_ce = zend_register_internal_class(&ce_task);
+	gearman_task_ce = zend_register_internal_class(&ce_task);
 	gearman_task_ce->create_object = gearman_task_obj_new;
 	memcpy(&gearman_task_obj_handlers, zend_get_std_object_handlers(), sizeof(gearman_task_obj_handlers));
 	gearman_task_obj_handlers.offset = XtOffsetOf(gearman_task_obj, std);

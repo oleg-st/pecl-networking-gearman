@@ -126,12 +126,14 @@ gearman_return_t _php_task_fail_fn(gearman_task_st *task) {
    Returns a task object */
 PHP_METHOD(GearmanTask, __construct) {
 }
+/* }}} */
 
 void gearman_task_free_obj(zend_object *object) {
         gearman_task_obj *intern = gearman_task_fetch_object(object);
+
         if (!intern) {
                 return;
-        }    
+        }
 
         zval_dtor(&intern->zworkload);
         zval_dtor(&intern->zdata);

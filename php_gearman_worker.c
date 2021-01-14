@@ -57,8 +57,10 @@ PHP_METHOD(GearmanWorker, __construct) {
 }
 /* }}} */
 
-void gearman_worker_free_obj(zend_object *object) {
-    gearman_worker_obj *intern = gearman_worker_fetch_object(object);
+/* {{{ proto object GearmanWorker::__destruct()
+   Destroys a worker object */
+PHP_METHOD(GearmanWorker, __destruct) {
+    gearman_worker_obj *intern = Z_GEARMAN_WORKER_P(getThis());
 
 	if (!intern)  {
 		return;
@@ -66,12 +68,22 @@ void gearman_worker_free_obj(zend_object *object) {
 
 	if (intern->flags & GEARMAN_WORKER_OBJ_CREATED) {
 		gearman_worker_free(&(intern->worker));
+		intern->flags &= ~GEARMAN_WORKER_OBJ_CREATED;
 	}
 
 	zval_dtor(&intern->cb_list);
-	zend_object_std_dtor(&intern->std);
 }
 /* }}} */
+
+void gearman_worker_free_obj(zend_object *object) {
+	gearman_worker_obj *intern = gearman_worker_fetch_object(object);
+
+	if (!intern)  {
+		return;
+	}
+
+	zend_object_std_dtor(&intern->std);
+}
 
 static inline void cb_list_dtor(zval *zv) {
 	gearman_worker_cb_obj *worker_cb = Z_PTR_P(zv);
