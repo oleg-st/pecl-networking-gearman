@@ -58,6 +58,7 @@ void gearman_worker_free_obj(zend_object *object);
 
 PHP_FUNCTION(gearman_worker_create);
 PHP_METHOD(GearmanWorker, __construct);
+PHP_METHOD(GearmanWorker, __destruct);
 PHP_FUNCTION(gearman_worker_return_code);
 PHP_FUNCTION(gearman_worker_error);
 PHP_FUNCTION(gearman_worker_errno);

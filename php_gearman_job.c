@@ -27,20 +27,30 @@ zend_object *gearman_job_obj_new(zend_class_entry *ce) {
         return &intern->std;
 }
 
-/* {{{ gearman_job_free_obj */
-void gearman_job_free_obj(zend_object *object) {
-        gearman_job_obj *intern = gearman_job_fetch_object(object);
+/* {{{ proto object GearmanJob::__destruct()
+   cleans up GearmanJob object */
+PHP_METHOD(GearmanJob, __destruct) {
+        gearman_job_obj *intern = Z_GEARMAN_JOB_P(getThis());
         if (!intern) {
                 return;
         }
 
         if (intern->flags & GEARMAN_JOB_OBJ_CREATED) {
-                gearman_job_free(intern->job);
+				gearman_job_free(intern->job);
+				intern->flags &= ~GEARMAN_JOB_OBJ_CREATED;
+        }
+}
+/* }}} */
+
+void gearman_job_free_obj(zend_object *object) {
+        gearman_job_obj *intern = gearman_job_fetch_object(object);
+
+        if (!intern) {
+               return;
         }
 
         zend_object_std_dtor(&intern->std);
 }
-/* }}} */
 
 /* {{{ proto int gearman_job_return_code()
    get last gearman_return_t */
@@ -256,7 +266,7 @@ PHP_FUNCTION(gearman_job_handle) {
 		RETURN_FALSE;
 	}
 
-	RETURN_STRING((char *)gearman_job_handle(obj->job))
+	RETURN_STRING((char *)gearman_job_handle(obj->job));
 }
 /* }}} */
 
@@ -276,7 +286,7 @@ PHP_FUNCTION(gearman_job_function_name) {
 		RETURN_FALSE;
 	}
 
-	RETURN_STRING((char *)gearman_job_function_name(obj->job))
+	RETURN_STRING((char *)gearman_job_function_name(obj->job));
 }
 /* }}} */
 
@@ -296,7 +306,7 @@ PHP_FUNCTION(gearman_job_unique) {
 		RETURN_FALSE;
 	}
 
-	RETURN_STRING((char *)gearman_job_unique(obj->job))
+	RETURN_STRING((char *)gearman_job_unique(obj->job));
 }
 /* }}} */
 

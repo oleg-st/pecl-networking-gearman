@@ -76,6 +76,7 @@ void gearman_client_free_obj(zend_object *object);
 
 PHP_FUNCTION(gearman_client_create);
 PHP_METHOD(GearmanClient, __construct);
+PHP_METHOD(GearmanClient, __destruct);
 PHP_FUNCTION(gearman_client_return_code);
 PHP_FUNCTION(gearman_client_error);
 PHP_FUNCTION(gearman_client_get_errno);

@@ -57,8 +57,10 @@ PHP_METHOD(GearmanWorker, __construct) {
 }
 /* }}} */
 
-void gearman_worker_free_obj(zend_object *object) {
-    gearman_worker_obj *intern = gearman_worker_fetch_object(object);
+/* {{{ proto object GearmanWorker::__destruct()
+   Destroys a worker object */
+PHP_METHOD(GearmanWorker, __destruct) {
+    gearman_worker_obj *intern = Z_GEARMAN_WORKER_P(getThis());
 
 	if (!intern)  {
 		return;
@@ -66,12 +68,22 @@ void gearman_worker_free_obj(zend_object *object) {
 
 	if (intern->flags & GEARMAN_WORKER_OBJ_CREATED) {
 		gearman_worker_free(&(intern->worker));
+		intern->flags &= ~GEARMAN_WORKER_OBJ_CREATED;
 	}
 
 	zval_dtor(&intern->cb_list);
-	zend_object_std_dtor(&intern->std);
 }
 /* }}} */
+
+void gearman_worker_free_obj(zend_object *object) {
+	gearman_worker_obj *intern = gearman_worker_fetch_object(object);
+
+	if (!intern)  {
+		return;
+	}
+
+	zend_object_std_dtor(&intern->std);
+}
 
 static inline void cb_list_dtor(zval *zv) {
 	gearman_worker_cb_obj *worker_cb = Z_PTR_P(zv);
@@ -142,7 +154,7 @@ PHP_FUNCTION(gearman_worker_errno) {
         }    
         obj = Z_GEARMAN_WORKER_P(zobj);
 
-        RETURN_LONG(gearman_worker_errno(&(obj->worker)))
+        RETURN_LONG(gearman_worker_errno(&(obj->worker)));
 }
 /* }}} */
 
@@ -157,7 +169,7 @@ PHP_FUNCTION(gearman_worker_options) {
         }    
         obj = Z_GEARMAN_WORKER_P(zobj);
 
-        RETURN_LONG(gearman_worker_options(&(obj->worker)))
+        RETURN_LONG(gearman_worker_options(&(obj->worker)));
 }
 /* }}} */
 
@@ -223,7 +235,7 @@ PHP_FUNCTION(gearman_worker_timeout) {
         }    
         obj = Z_GEARMAN_WORKER_P(zobj);
 
-        RETURN_LONG(gearman_worker_timeout(&(obj->worker)))
+        RETURN_LONG(gearman_worker_timeout(&(obj->worker)));
 }
 /* }}} */
 
@@ -495,7 +507,7 @@ static void *_php_worker_function_callback(gearman_job_st *job,
 
         jobj->ret = GEARMAN_SUCCESS;
 
-        if (call_user_function_ex(EG(function_table), NULL, &worker_cb->zcall, &retval, param_count, argv, 0, NULL) != SUCCESS) {
+        if (call_user_function(EG(function_table), NULL, &worker_cb->zcall, &retval, param_count, argv) != SUCCESS) {
                 php_error_docref(NULL,
                                 E_WARNING,
                                 "Could not call the function %s",
